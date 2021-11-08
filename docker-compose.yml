@@ -1,0 +1,40 @@
+version: "3.7"
+
+services:
+  nginx:
+    image: nginx:alpine
+    volumes:
+      - ./www/:/application
+      - ./infrastructure/nginx/nginx.conf:/etc/nginx/conf.d/default.conf
+    ports:
+      - ${WEBSERVER_PORT}:80
+    depends_on:
+      - php
+    restart: on-failure
+
+  php:
+    build: ./infrastructure/php/
+    working_dir: /application
+    env_file:
+      - .env
+    volumes:
+      - ./www/:/application
+      - ./infrastructure/php/php-ini-overrides.ini:/usr/local/etc/php/conf.d/php-ini-overrides.ini
+    depends_on:
+      - database
+    restart: on-failure
+
+  database:
+    image: mysql:5.7
+    container_name: database
+    volumes:
+      - ./infrastructure/database:/docker-entrypoint-initdb.d
+      - ./infrastructure/database/files:/var/lib/mysql
+    ports:
+      - ${DB_PORT}:3306
+    environment:
+      MYSQL_USER: ${MYSQL_USER}
+      MYSQL_PASSWORD: ${MYSQL_PASSWORD}
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
+      MYSQL_DATABASE: ${MYSQL_DATABASE}
+    restart: on-failure
