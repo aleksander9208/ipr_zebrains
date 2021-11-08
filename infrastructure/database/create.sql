@@ -1,44 +1,41 @@
 use develop;
 
-/* Список отелей */
-create table hotels(
-    hotel_id int not null auto_increment primary key,
-    city_id int not null,
-    hotel_type_id int not null,
-    name varchar(45) not null,
-    attention varchar(45) not null,
-    stars int not null,
-    address varchar(45) not null,
-    description text not null,
-    no_smoking bool not null,
-    no_animals bool not null,
-    location_latitude float not null,
-    location_longitude float not null,
-    location_zoom float not null,
-    commission decimal(20,2) not null,
-    currency_id int not null,
-    created datetime not null,
-    created_by int not null,
-    modified datetime not null,
-    modified_by int not null
-);
-
-/* Географическое положение отелей */
 create table cities(
-    city_id int not null auto_increment primary key,
-    region_id int not null,
-    name varchar(45) not null,
-    location_latitude float not null,
-    location_longitude float not null,
-    location_zoom float not null,
-    wheater varchar(45) not null,
-    created datetime not null,
-    created_by int not null,
-    modified datetime not null,
-    modified_by int not null,
-    foreign key (city_id) references hotels (city_id)
+                       city_id int auto_increment primary key,
+                       region_id int,
+                       name varchar(45),
+                       location_latitude float,
+                       location_longitude float,
+                       location_zoom float,
+                       wheater varchar(45),
+                       created datetime,
+                       created_by int,
+                       modified datetime,
+                       modified_by int
 );
 
+create table hotels(
+                       hotel_id int auto_increment primary key,
+                       city_id int,
+                       hotel_type_id int,
+                       name varchar(45),
+                       attention varchar(45),
+                       stars int,
+                       address varchar(45),
+                       description text,
+                       no_smoking bool,
+                       no_animals bool,
+                       location_latitude float,
+                       location_longitude float,
+                       location_zoom float,
+                       commission decimal(20,2),
+                       currency_id int,
+                       created datetime,
+                       created_by int,
+                       modified datetime,
+                       modified_by int,
+                       foreign key (city_id) references cities (city_id)
+);
 create table regions(
     region_id int not null auto_increment primary key,
     country_id int not null,
