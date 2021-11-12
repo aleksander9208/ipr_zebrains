@@ -1,139 +1,91 @@
-use develop;
 
-create table cities(
-                       city_id int auto_increment primary key,
-                       region_id int,
-                       name varchar(45),
-                       location_latitude float,
-                       location_longitude float,
-                       location_zoom float,
-                       wheater varchar(45),
-                       created datetime,
-                       created_by int,
-                       modified datetime,
-                       modified_by int
-);
+create table if not exists countries(
+                                        country_id int auto_increment primary key,
+                                        name varchar(45),
+    created datetime,
+    created_by int,
+    modified datetime,
+    modified_by int
+    );
 
-create table hotels(
-                       hotel_id int auto_increment primary key,
-                       city_id int,
-                       hotel_type_id int,
-                       name varchar(45),
-                       attention varchar(45),
-                       stars int,
-                       address varchar(45),
-                       description text,
-                       no_smoking bool,
-                       no_animals bool,
-                       location_latitude float,
-                       location_longitude float,
-                       location_zoom float,
-                       commission decimal(20,2),
-                       currency_id int,
-                       created datetime,
-                       created_by int,
-                       modified datetime,
-                       modified_by int,
-                       foreign key (city_id) references cities (city_id)
-);
-create table regions(
-    region_id int not null auto_increment primary key,
-    country_id int not null,
-    name varchar(45) not null,
-    created datetime not null,
-    created_by int not null,
-    modified datetime not null,
-    modified_by int not null,
-    foreign key (region_id) references cities (region_id)
-);
+create table if not exists regions(
+                                      region_id int auto_increment primary key,
+                                      country_id int,
+                                      name varchar(45),
+    created datetime,
+    created_by int,
+    modified datetime,
+    modified_by int,
+    foreign key (country_id) references countries (country_id)
+    );
 
-create table countries(
-    country_id int not null auto_increment primary key,
-    name varchar(45) not null,
-    created datetime not null,
-    created_by int not null,
-    modified datetime not null,
-    modified_by int not null,
-    foreign key (country_id) references regions (country_id)
-);
+create table if not exists cities(
+                                     city_id int auto_increment primary key,
+                                     region_id int,
+                                     name varchar(45),
+    location_latitude float,
+    location_longitude float,
+    created datetime,
+    created_by int,
+    modified datetime,
+    modified_by int,
+    foreign key (region_id) references regions (region_id)
+    );
 
-/* Тип отелей */
-create table hotel_types(
-    hotel_type_id int not null auto_increment primary key,
-    name varchar(45) not null,
-    created datetime not null,
-    created_by int not null,
-    modified datetime not null,
-    modified_by int not null,
-    foreign key (hotel_type_id) references hotels (hotel_type_id)
-);
+create table if not exists hotels(
+                                     hotel_id int auto_increment primary key,
+                                     city_id int,
+                                     hotel_type_id int,
+                                     name varchar(45),
+    stars int,
+    address varchar(45),
+    description text,
+    no_smoking bool,
+    no_animals bool,
+    location_latitude float,
+    location_longitude float,
+    commission decimal(20,2),
+    currency_id int,
+    created datetime,
+    created_by int,
+    modified datetime,
+    modified_by int,
+    foreign key (city_id) references cities (city_id)
+    );
 
-/* Картинки отеля */
-create table hotel_images(
-    hotel_images_id int not null auto_increment primary key,
-    hotel_id int not null,
-    image_id int not null,
-    priority int not null,
-    foreign key (hotel_id) references hotels (hotel_id)
-);
+insert into countries(
+    country_id, name, created,
+    created_by, modified, modified_by)
+    value
+    (7, 'Россия', CURRENT_DATE(), 1, CURRENT_DATE(), 1);
 
-/* Картинки */
-create table images(
-    image_id int not null auto_increment primary key,
-    name varchar(45) not null,
-    text varchar(45) not null,
-    foreign key (image_id) references hotel_images (image_id)
-);
+insert into regions (
+    region_id, country_id, name, created,
+    created_by, modified, modified_by)
+    value
+    (36, 7, 'Воронежская область', CURRENT_DATE(), 1, CURRENT_DATE(), 1);
 
-/* Картинки комнат */
-create table room_images(
-    room_image_id int not null auto_increment primary key,
-    room_id int not null,
-    image_id int not null,
-    priority int not null,
-    foreign key (image_id) references images (image_id)
-);
+insert into cities (
+    city_id, region_id, name, location_latitude, location_longitude,
+    created, created_by, modified, modified_by)
+    value
+    (1, 36, 'Воронеж', '51°40′19″', '39°11′03″', CURRENT_DATE, 1, CURRENT_DATE(), 1);
 
-/* Комнаты */
-create table rooms(
-    room_id int not null auto_increment primary key,
-    room_type_id varchar(45) not null,
-    hotel_id int not null,
-    room_number int not null,
-    max_children int not null,
-    max_adult int not null,
-    main_image varchar(45) not null,
-    thumbnail_image varchar(45) not null,
-    created datetime not null,
-    created_by int not null,
-    modified datetime not null,
-    modified_by int not null,
-    foreign key (hotel_id) references hotels (hotel_id)
-)
+insert into hotels (
+    hotel_id, city_id, hotel_type_id, name, stars,
+    address, description, no_smoking, no_animals, location_latitude,
+    location_longitude, commission, currency_id, created,
+    created_by, modified, modified_by)
+values
+(1, 1, 5, 'Мариот', 4, 'пр. Революции, 38', 'Описание не знаю что написать', 0, 1, 51.668011, 39.205525, 10, 1, CURRENT_DATE(), 1, CURRENT_DATE(), 1),
+(2, 1, 3, 'Бронзовый Кабан', 4, 'ул. Кольцовская, 1Д', 'Описание не знаю что написать', 0, 1, 51.678401, 39.212834, 15, 1, CURRENT_DATE(), 1, CURRENT_DATE(), 1),
+(3, 1, 4, 'Украина', 4, 'ул. Арсенальная, 4а', 'Описание не знаю что написать', 0, 1, 51.674620, 39.214856, 5, 1, CURRENT_DATE(), 1, CURRENT_DATE(), 1),
+(4, 1, 2, 'Принц', 4, 'Московский проспект, 171Б', 'Описание не знаю что написать', 0, 1, 51.752702, 39.185704, 6, 1, CURRENT_DATE(), 1, CURRENT_DATE(), 1),
+(5, 1, 1, 'МП', 4, 'Московский просп., 129/1', 'Описание не знаю что написать', 0, 1, 51.718049, 39.178298, 8, 1, CURRENT_DATE(), 1, CURRENT_DATE(), 1);
 
-/* Тип комнаты */
-create table room_types(
-   room_type_id int not null auto_increment primary key,
-   name varchar(45) not null,
-   created datetime not null,
-   created_by int not null,
-   modified datetime not null,
-   modified_by int not null,
-   foreign key (room_type_id) references rooms (room_id)
-);
 
-/* Цена комнаты */
-create table room_prices(
-    room_prices_id int not null auto_increment primary key,
-    room_id int not null,
-    start_date datetime not null,
-    full_price decimal(20,2) not null,
-    adult_price decimal(20,2) not null,
-    child_price decimal(20,2) not null,
-    published bool not null,
-    created datetime not null,
-    created_by int not null,
-    modified datetime not null,
-    modified_by int not null,
-    foreign key (room_id) references rooms (room_id)
-);
+
+
+
+
+
