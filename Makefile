@@ -29,5 +29,10 @@ rb: ## Перезапуск всех контейнеров проекта
 bash: ## Зайти в bash контейнера с php
 	docker-compose exec php /bin/bash
 
+prepare-db: ## Выполнить скрипт с настройками базы
+	@docker-compose exec database \
+	cat /docker-entrypoint-initdb.d/create.sql | \
+	mysql -h localhost -P 3306 -uroot --password=$(MYSQL_ROOT_PASSWORD) --protocol=tcp
+
 backup:
 	docker exec -it database sh -c "mysqldump -uroot --password=$(MYSQL_ROOT_PASSWORD) --databases $(MYSQL_DATABASE) | gzip > /docker-entrypoint-initdb.d/dump_$(MYSQL_DATABASE).sql.gz"
