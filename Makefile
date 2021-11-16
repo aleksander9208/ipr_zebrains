@@ -29,17 +29,5 @@ rb: ## Перезапуск всех контейнеров проекта
 bash: ## Зайти в bash контейнера с php
 	docker-compose exec php /bin/bash
 
-mysql: ## Зайти в консоль mysql
-	docker-compose exec database mysql -u $(MYSQL_USER) --password=$(MYSQL_PASSWORD) $(MYSQL_DATABASE)
-
 backup:
 	docker exec -it database sh -c "mysqldump -uroot --password=$(MYSQL_ROOT_PASSWORD) --databases $(MYSQL_DATABASE) | gzip > /docker-entrypoint-initdb.d/dump_$(MYSQL_DATABASE).sql.gz"
-
-ci: ## composer install
-	docker-compose exec php composer install
-
-cu: ## composer update
-	docker-compose exec php composer update
-
-run: ## запуск проекта и установка composer
-	up ci

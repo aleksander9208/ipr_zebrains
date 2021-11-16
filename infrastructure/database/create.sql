@@ -1,28 +1,28 @@
 
 create table if not exists countries(
-                                        country_id int auto_increment primary key,
-                                        name varchar(45),
+    country_id int auto_increment primary key,
+    name varchar(45),
     created datetime,
     created_by int,
     modified datetime,
     modified_by int
-    );
+) CHARSET=utf8;
 
 create table if not exists regions(
-                                      region_id int auto_increment primary key,
-                                      country_id int,
-                                      name varchar(45),
+    region_id int auto_increment primary key,
+    country_id int,
+    name varchar(45),
     created datetime,
     created_by int,
     modified datetime,
     modified_by int,
     foreign key (country_id) references countries (country_id)
-    );
+) CHARSET=utf8;
 
 create table if not exists cities(
-                                     city_id int auto_increment primary key,
-                                     region_id int,
-                                     name varchar(45),
+    city_id int auto_increment primary key,
+    region_id int,
+    name varchar(45),
     location_latitude float,
     location_longitude float,
     created datetime,
@@ -30,13 +30,13 @@ create table if not exists cities(
     modified datetime,
     modified_by int,
     foreign key (region_id) references regions (region_id)
-    );
+) CHARSET=utf8;
 
 create table if not exists hotels(
-                                     hotel_id int auto_increment primary key,
-                                     city_id int,
-                                     hotel_type_id int,
-                                     name varchar(45),
+    hotel_id int auto_increment primary key,
+    city_id int,
+    hotel_type_id int,
+    name varchar(45),
     stars int,
     address varchar(45),
     description text,
@@ -51,7 +51,7 @@ create table if not exists hotels(
     modified datetime,
     modified_by int,
     foreign key (city_id) references cities (city_id)
-    );
+) CHARSET=utf8;
 
 insert into countries(
     country_id, name, created,
@@ -83,7 +83,26 @@ values
 (4, 1, 2, 'Принц', 4, 'Московский проспект, 171Б', 'Описание не знаю что написать', 0, 1, 51.752702, 39.185704, 6, 1, CURRENT_DATE(), 1, CURRENT_DATE(), 1),
 (5, 1, 1, 'МП', 4, 'Московский просп., 129/1', 'Описание не знаю что написать', 0, 1, 51.718049, 39.178298, 8, 1, CURRENT_DATE(), 1, CURRENT_DATE(), 1);
 
+CREATE INDEX hotel_id ON hotels(hotel_id);
 
+DELIMITER $$
+
+CREATE
+    TRIGGER `hotels_insert` AFTER INSERT
+    ON `hotels`
+    FOR EACH ROW BEGIN
+
+    IF NEW.deleted THEN
+        SET @changetype = 'DELETE';
+    ELSE
+        SET @changetype = 'NEW';
+END IF;
+
+INSERT INTO cities (city_id) VALUES (NEW.city_id);
+
+END$$
+
+DELIMITER ;
 
 
 
