@@ -1,3 +1,4 @@
+ALTER DATABASE develop charset=utf8;
 
 create table if not exists countries(
     country_id int auto_increment primary key,
@@ -23,8 +24,8 @@ create table if not exists cities(
     city_id int auto_increment primary key,
     region_id int,
     name varchar(45),
-    location_latitude float,
-    location_longitude float,
+    location_latitude varchar(45),
+    location_longitude varchar(45),
     created datetime,
     created_by int,
     modified datetime,
@@ -42,8 +43,8 @@ create table if not exists hotels(
     description text,
     no_smoking bool,
     no_animals bool,
-    location_latitude float,
-    location_longitude float,
+    location_latitude varchar(45),
+    location_longitude varchar(45),
     commission decimal(20,2),
     currency_id int,
     created datetime,
@@ -81,28 +82,23 @@ values
 (2, 1, 3, 'Бронзовый Кабан', 4, 'ул. Кольцовская, 1Д', 'Описание не знаю что написать', 0, 1, 51.678401, 39.212834, 15, 1, CURRENT_DATE(), 1, CURRENT_DATE(), 1),
 (3, 1, 4, 'Украина', 4, 'ул. Арсенальная, 4а', 'Описание не знаю что написать', 0, 1, 51.674620, 39.214856, 5, 1, CURRENT_DATE(), 1, CURRENT_DATE(), 1),
 (4, 1, 2, 'Принц', 4, 'Московский проспект, 171Б', 'Описание не знаю что написать', 0, 1, 51.752702, 39.185704, 6, 1, CURRENT_DATE(), 1, CURRENT_DATE(), 1),
-(5, 1, 1, 'МП', 4, 'Московский просп., 129/1', 'Описание не знаю что написать', 0, 1, 51.718049, 39.178298, 8, 1, CURRENT_DATE(), 1, CURRENT_DATE(), 1);
+(5, 1, 1, 'МП', 4, 'Московский просп., 129/1', 'Описание не знаю что написать', 0, 1, 51.718049, 39.178298, 8, 1, CURRENT_DATE(), 1, CURRENT_DATE(), 1),
+(6, 1, 1, 'МП', 4, 'Московский просп., 129/1', 'Описание не знаю что написать', 0, 1, 51.718049, 39.178298, 8, 1, CURRENT_DATE(), 1, CURRENT_DATE(), 1);
 
 CREATE INDEX hotel_id ON hotels(hotel_id);
 
-DELIMITER $$
-
 CREATE
-    TRIGGER `hotels_insert` AFTER INSERT
+    TRIGGER `hotels_insert` BEFORE INSERT
     ON `hotels`
     FOR EACH ROW BEGIN
 
-    IF NEW.deleted THEN
-        SET @changetype = 'DELETE';
-    ELSE
-        SET @changetype = 'NEW';
-END IF;
+    SET NEW.location_latitude = (select location_latitude from cities where city_id = NEW.city_id);
+    SET NEW.location_longitude = (select location_longitude from cities where city_id = NEW.city_id);
+END
 
-INSERT INTO cities (city_id) VALUES (NEW.city_id);
 
-END$$
 
-DELIMITER ;
+
 
 
 
