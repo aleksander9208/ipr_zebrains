@@ -85,7 +85,7 @@ values
 (5, 1, 1, 'МП', 4, 'Московский просп., 129/1', 'Описание не знаю что написать', 0, 1, 51.718049, 39.178298, 8, 1, CURRENT_DATE(), 1, CURRENT_DATE(), 1),
 (6, 1, 1, 'МП', 4, 'Московский просп., 129/1', 'Описание не знаю что написать', 0, 1, 51.718049, 39.178298, 8, 1, CURRENT_DATE(), 1, CURRENT_DATE(), 1);
 
-CREATE INDEX hotel_id ON hotels(hotel_id);
+CREATE INDEX hotel_id ON hotels(city_id);
 
 CREATE
     TRIGGER `hotels_insert` BEFORE INSERT
