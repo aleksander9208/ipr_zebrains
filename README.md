@@ -4,7 +4,7 @@
 git clone git@github.com:aleksander9208/ipr_zebrains.git
 cd ipr_zebrains
 make env
-make run
+make up
 ```
 
 Опционально, если автоматически не отработал скрипт,

@@ -46,4 +46,4 @@ services:
     ports:
       - 8081:80
     environment:
-      PMA_HOST: mysql
+      PMA_HOST: database
